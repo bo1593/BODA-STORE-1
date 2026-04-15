@@ -45,52 +45,39 @@
         <button class="olive-btn" onclick="finalize()">تأكيد الإرسال ⚡</button>
     </div>
 
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getFirestore, collection, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-app.js"; // نسخة أحدث
+    import { 
+        initializeFirestore, 
+        collection, 
+        getDocs, 
+        query, 
+        limit, 
+        memoryLocalCache 
+    } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js"; // نسخة أحدث
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyBSK2BXXJumwNYmKtXP8Ej_Guu2B0icrbs",
-            authDomain: "boda-store-fb2b4.firebaseapp.com",
-            projectId: "boda-store-fb2b4",
-            storageBucket: "boda-store-fb2b4.firebasestorage.app",
-            messagingSenderId: "363262838551",
-            appId: "1:363262838551:web:a037c8c8c0d5c01da51952"
-        };
+    const firebaseConfig = {
+        apiKey: "AIzaSyBSK2BXXJumwNYmKtXP8Ej_Guu2B0icrbs",
+        authDomain: "boda-store-fb2b4.firebaseapp.com",
+        projectId: "boda-store-fb2b4",
+        storageBucket: "boda-store-fb2b4.firebasestorage.app",
+        messagingSenderId: "363262838551",
+        appId: "1:363262838551:web:a037c8c8c0d5c01da51952"
+    };
 
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-        let selectedPack = "", selectedPrice = "";
+    const app = initializeApp(firebaseConfig);
 
-        async function loadData() {
-            const q = query(collection(db, "packages"), orderBy("createdAt", "asc"));
-            const snap = await getDocs(q);
-            const list = document.getElementById('offers-list');
-            list.innerHTML = "";
-            snap.forEach(doc => {
-                const p = doc.data();
-                list.innerHTML += `<div class="card"><h2>${p.name}</h2><span style="font-size:1.8rem; color:var(--olive-bright); font-weight:900;">${p.price} EGP</span><br><br><button class="olive-btn" onclick="window.openPay('${p.name}', '${p.price}')">تجهيز الطلب</button></div>`;
-            });
-        }
+    // تعديل حيوي: تحديد قاعدة البيانات بالاسم الصريح وتفعيل الـ Long Polling
+    const db = initializeFirestore(app, {
+        experimentalForceLongPolling: true,
+        useFetchStreams: false, // لزيادة التوافق مع الشبكات الضعيفة
+        localCache: memoryLocalCache()
+    }, "(default)"); // تحديد الـ ID يدوياً هنا
 
-        window.openPay = (n, p) => {
-            selectedPack = n; selectedPrice = p;
-            document.getElementById('main-view').style.display = 'none';
-            document.getElementById('payment-page').style.display = 'block';
-            document.getElementById('order-title').innerText = "تأكيد " + n;
-        };
+    window.db = db;
 
-        window.finalize = () => {
-            const id = document.getElementById('player-id').value;
-            const name = document.getElementById('player-name').value;
-            const sender = document.getElementById('sender-number').value;
-            if(!id || !name || !sender) return alert("أكمل البيانات!");
-            const msg = `طلب جديد: ${selectedPack}%0Aالسعر: ${selectedPrice}%0AID: ${id}%0Aالاسم: ${name}%0Aالمحول: ${sender}`;
-            window.location.href = `https://wa.me/201044580421?text=${msg}`;
-        };
-
-        loadData();
-    </script>
+    // ... باقي الكود (loadData أو loadAdminData) ...
+</script>
     <footer>BODA STORE // 2026</footer>
 </body>
 </html>
