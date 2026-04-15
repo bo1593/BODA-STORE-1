@@ -182,10 +182,10 @@
             transition: 0.3s;
         }
 
-        .olive-btn:hover { 
-            background: var(--beige); 
-            color: var(--black); 
-            box-shadow: 0 0 20px var(--olive-drab); 
+        .olive-btn:hover {
+            background: var(--beige);
+            color: var(--black);
+            box-shadow: 0 0 20px var(--olive-drab);
         }
 
         #payment-page {
@@ -218,7 +218,7 @@
             justify-content: center;
             text-align: center;
         }
-        
+
         .loading-bar { width: 200px; height: 4px; background: #1a1a1a; margin-top: 20px; position: relative; overflow: hidden; border-radius: 10px;}
         .loading-progress { width: 0%; height: 100%; background: var(--olive-bright); position: absolute; animation: load 2.5s forwards; }
         @keyframes load { from { width: 0%; } to { width: 100%; } }
@@ -303,17 +303,41 @@
             <span class="price">250 EGP</span>
             <button class="olive-btn" onclick="goToPay('325 UC', '250 EGP')">تجهيز الطلب</button>
         </div>
-        <div class="card" style="border-color: var(--beige);">
-            <div style="color: var(--beige); font-size: 0.8rem; margin-bottom: 10px; background: var(--olive-drab); display: inline-block; padding: 2px 10px;">★ الأكثر طلباً ★</div>
+        <div class="card">
+            <div style="color: #000; font-size: 0.8rem; margin-bottom: 10px; background: #ffcc00; display: inline-block; padding: 2px 10px; font-weight: bold;">⚠️ عرض لفترة محدودة</div>
             <h2>660 UC</h2>
-            <span class="price">550 EGP</span>
-            <button class="olive-btn" onclick="goToPay('660 UC', '550 EGP')">تجهيز الطلب</button>
+            <span class="price">500بدل من 5̸5̸0̸ EGP</span>
+            <button class="olive-btn" onclick="goToPay('660 UC', '500 EGP')">تجهيز الطلب</button>
         </div>
         <div class="card">
             <div style="color: #000; font-size: 0.8rem; margin-bottom: 10px; background: #ffcc00; display: inline-block; padding: 2px 10px; font-weight: bold;">⚠️ عرض لفترة محدودة</div>
             <h2>1800 UC</h2>
-            <span class="price">1380 EGP</span>
-            <button class="olive-btn" onclick="goToPay('1800 UC', '1380 EGP')">تجهيز الطلب</button>
+            <span class="price">1300بدل من 1̸5̸0̸0̸ EGP</span>
+            <button class="olive-btn" onclick="goToPay('1800 UC', '1300 EGP')">تجهيز الطلب</button>
+        </div>
+        <div class="card">
+            <div style="color: #000; font-size: 0.8rem; margin-bottom: 10px; background: #ffcc00; display: inline-block; padding: 2px 10px; font-weight: bold;">⚠️ عرض لفترة محدودة</div>
+            <h2>3850 UC</h2>
+            <span class="price">2400بدل من 2̸5̸0̸0̸ EGP</span>
+            <button class="olive-btn" onclick="goToPay('3850 UC', '2400 EGP')">تجهيز الطلب</button>
+        </div>
+        <div class="card">
+            <div style="color: #000; font-size: 0.8rem; margin-bottom: 10px; background: #ffcc00; display: inline-block; padding: 2px 10px; font-weight: bold;">⚠️ عرض لفترة محدودة</div>
+            <h2>8100 UC</h2>
+            <span class="price">4800بدل من 5̸0̸0̸0̸ EGP</span>
+            <button class="olive-btn" onclick="goToPay('8100 UC', '4800 EGP')">تجهيز الطلب</button>
+        </div>
+        <div class="card">
+            <div style="color: #000; font-size: 0.8rem; margin-bottom: 10px; background: #ffcc00; display: inline-block; padding: 2px 10px; font-weight: bold;">⚠️ عرض لفترة محدودة</div>
+            <h2>16200 UC</h2>
+            <span class="price">9500بدل من 1̸0̸0̸0̸0̸ EGP</span>
+            <button class="olive-btn" onclick="goToPay('16200 UC', '9500 EGP')">تجهيز الطلب</button>
+        </div>
+        <div class="card">
+            <div style="color: #000; font-size: 0.8rem; margin-bottom: 10px; background: #ffcc00; display: inline-block; padding: 2px 10px; font-weight: bold;">⚠️ عرض لفترة محدودة</div>
+            <h2>24300 UC</h2>
+            <span class="price">16500بدل من 1̸7̸0̸0̸0̸ EGP</span>
+            <button class="olive-btn" onclick="goToPay('24300 UC', '16500 EGP')">تجهيز الطلب</button>
         </div>
     </div>
 
@@ -363,7 +387,7 @@
             const id = document.getElementById('player-id').value;
             const name = document.getElementById('player-name').value;
             const sender = document.getElementById('sender-number').value;
-            
+
             if(!id || !name || !sender) return alert("برجاء إكمال كافة البيانات العسكرية للمهمة!");
 
             document.getElementById('loader-screen').style.display = 'flex';
