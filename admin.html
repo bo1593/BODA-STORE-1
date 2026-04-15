@@ -1,49 +1,56 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <title>لوحة تحكم BODA STORE</title>
     <link href="https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Cairo:wght@700&display=swap" rel="stylesheet">
     <style>
-        :root { --olive-drab: #556B2F; --beige: #F5F5DC; --black: #0B0C0B; }
-        body { background: var(--black); color: var(--beige); font-family: 'Cairo', sans-serif; padding: 20px; }
-        .admin-card { background: #151712; border: 2px solid var(--olive-drab); padding: 20px; margin-bottom: 20px; }
-        input { width: 100%; padding: 10px; margin: 10px 0; background: #000; border: 1px solid var(--olive-drab); color: #fff; }
-        .btn { background: var(--olive-drab); color: var(--beige); border: none; padding: 10px 20px; cursor: pointer; font-weight: bold; width: 100%; }
-        .item { display: flex; justify-content: space-between; padding: 10px; border-bottom: 1px solid var(--olive-drab); align-items: center; }
-        .delete-btn { color: red; cursor: pointer; background: none; border: none; font-weight: bold; }
+        :root { --olive-drab: #556B2F; --beige: #F5F5DC; --black: #0B0C0B; --olive-bright: #808000; }
+        body { background: var(--black); color: var(--beige); font-family: 'Cairo', sans-serif; padding: 20px; margin: 0; }
+        .admin-card { background: #151712; border: 2px solid var(--olive-drab); padding: 20px; margin-bottom: 20px; clip-path: polygon(2% 0, 100% 0, 100% 90%, 98% 100%, 0 100%, 0 10%); }
+        h3 { color: var(--olive-bright); border-bottom: 1px solid var(--olive-drab); padding-bottom: 10px; }
+        input { width: 100%; padding: 12px; margin: 10px 0; background: #000; border: 1px solid var(--olive-drab); color: #fff; box-sizing: border-box; outline: none; }
+        input:focus { border-color: var(--beige); }
+        .btn { background: var(--olive-drab); color: var(--beige); border: none; padding: 15px 20px; cursor: pointer; font-weight: bold; width: 100%; transition: 0.3s; font-family: 'Cairo'; }
+        .btn:hover { background: var(--olive-bright); }
+        .item { display: flex; justify-content: space-between; padding: 15px; border-bottom: 1px solid #222; align-items: center; }
+        .delete-btn { color: #ff4444; cursor: pointer; background: none; border: 1px solid #ff4444; padding: 5px 10px; border-radius: 4px; transition: 0.3s; }
+        .delete-btn:hover { background: #ff4444; color: #fff; }
     </style>
 </head>
 <body>
-    <h1 style="font-family:'Black Ops One'; text-align:center;">ADMIN COMMAND CENTER</h1>
+    <h1 style="font-family:'Black Ops One'; text-align:center; color: var(--olive-drab); font-size: 2.5rem; margin-bottom: 30px;">ADMIN COMMAND CENTER</h1>
     
     <div class="admin-card">
-        <h3>إحصائيات الأرباح المتوقعة</h3>
-        <p id="revenue" style="font-size: 2rem; color: var(--olive-drab);">0 EGP</p>
+        <h3>📊 إحصائيات الأرباح المتوقعة</h3>
+        <p id="revenue" style="font-size: 2.5rem; color: var(--beige); font-weight: 900; margin: 10px 0;">0 EGP</p>
     </div>
 
     <div class="admin-card">
-        <h3>إضافة باقة جديدة</h3>
+        <h3>➕ إضافة باقة جديدة</h3>
         <input type="text" id="p-name" placeholder="اسم الباقة (مثال: 660 UC)">
         <input type="number" id="p-price" placeholder="السعر (مثال: 550)">
-        <button class="btn" onclick="addItem()">إضافة الباقة للمتجر ➕</button>
+        <button class="btn" onclick="addItem()">إضافة الباقة للمتجر 🚀</button>
     </div>
 
     <div class="admin-card">
-        <h3>الباقات المعروضة حالياً</h3>
-        <div id="p-list">جارِ التحميل...</div>
+        <h3>🛠️ الباقات المعروضة حالياً</h3>
+        <div id="p-list">جارِ تحميل البيانات من السيرفر...</div>
     </div>
 
- <script type="module">
+<script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    // استيراد initializeFirestore لحل مشكلة الاتصال
     import { 
         initializeFirestore, 
         collection, 
         getDocs, 
+        addDoc, 
+        deleteDoc, 
+        doc, 
         query, 
         limit, 
-        memoryLocalCache 
+        memoryLocalCache,
+        serverTimestamp 
     } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
     const firebaseConfig = {
@@ -55,62 +62,88 @@
         appId: "1:363262838551:web:a037c8c8c0d5c01da51952"
     };
 
-    // تهيئة التطبيق
     const app = initializeApp(firebaseConfig);
-
-    // الحل الجذري لمشكلة الاتصال (Long Polling)
     const db = initializeFirestore(app, {
         experimentalForceLongPolling: true,
         localCache: memoryLocalCache()
     });
 
-    let selectedPack = "", selectedPrice = "";
-
-    async function loadData() {
+    // وظيفة جلب وعرض البيانات في لوحة التحكم
+    async function loadAdminData() {
         try {
-            // جلب البيانات بدون اشتراط الترتيب الزمني حالياً لتجنب مشاكل الـ Index
             const q = query(collection(db, "packages"), limit(100));
             const snap = await getDocs(q);
-            const list = document.getElementById('offers-list');
+            const list = document.getElementById('p-list');
+            let total = 0;
             list.innerHTML = "";
             
             if (snap.empty) {
-                list.innerHTML = "<p style='text-align:center;'>لا توجد باقات متاحة حالياً.</p>";
+                list.innerHTML = "<p style='text-align:center;'>لا توجد باقات في القاعدة حالياً.</p>";
+                document.getElementById('revenue').innerText = "0 EGP";
                 return;
             }
 
-            snap.forEach(doc => {
-                const p = doc.data();
+            snap.forEach(documentSnapshot => {
+                const p = documentSnapshot.data();
+                const id = documentSnapshot.id;
+                total += parseInt(p.price) || 0;
+                
                 list.innerHTML += `
-                    <div class="card">
-                        <h2>${p.name}</h2>
-                        <span style="font-size:1.8rem; color:var(--olive-bright); font-weight:900;">${p.price} EGP</span>
-                        <br><br>
-                        <button class="olive-btn" onclick="window.openPay('${p.name}', '${p.price}')">تجهيز الطلب</button>
+                    <div class="item">
+                        <div>
+                            <strong style="color:var(--olive-bright)">${p.name}</strong> 
+                            <span style="margin-right:15px;">${p.price} EGP</span>
+                        </div>
+                        <button class="delete-btn" onclick="deleteItem('${id}')">حذف 🗑️</button>
                     </div>`;
             });
+            document.getElementById('revenue').innerText = total + " EGP";
         } catch (error) {
-            console.error("خطأ في تحميل البيانات:", error);
+            console.error("خطأ في التحميل:", error);
+            document.getElementById('p-list').innerHTML = "حدث خطأ أثناء جلب البيانات.";
         }
     }
 
-    window.openPay = (n, p) => {
-        selectedPack = n; selectedPrice = p;
-        document.getElementById('main-view').style.display = 'none';
-        document.getElementById('payment-page').style.display = 'block';
-        document.getElementById('order-title').innerText = "تأكيد " + n;
+    // وظيفة إضافة باقة جديدة
+    window.addItem = async () => {
+        const nameInput = document.getElementById('p-name');
+        const priceInput = document.getElementById('p-price');
+        
+        if (!nameInput.value || !priceInput.value) {
+            return alert("برجاء إدخال الاسم والسعر!");
+        }
+
+        try {
+            await addDoc(collection(db, "packages"), {
+                name: nameInput.value,
+                price: priceInput.value,
+                createdAt: serverTimestamp()
+            });
+            alert("تمت إضافة الباقة بنجاح ✅");
+            nameInput.value = "";
+            priceInput.value = "";
+            loadAdminData(); // تحديث القائمة
+        } catch (error) {
+            console.error("خطأ في الإضافة:", error);
+            alert("فشلت الإضافة، تحقق من اتصالك.");
+        }
     };
 
-    window.finalize = () => {
-        const id = document.getElementById('player-id').value;
-        const name = document.getElementById('player-name').value;
-        const sender = document.getElementById('sender-number').value;
-        if(!id || !name || !sender) return alert("أكمل البيانات!");
-        const msg = `طلب جديد: ${selectedPack}%0Aالسعر: ${selectedPrice}%0AID: ${id}%0Aالاسم: ${name}%0Aالمحول: ${sender}`;
-        window.location.href = `https://wa.me/201044580421?text=${msg}`;
+    // وظيفة حذف باقة
+    window.deleteItem = async (id) => {
+        if (confirm("هل أنت متأكد من حذف هذه الباقة؟")) {
+            try {
+                await deleteDoc(doc(db, "packages", id));
+                loadAdminData(); // تحديث القائمة
+            } catch (error) {
+                console.error("خطأ في الحذف:", error);
+                alert("فشل الحذف.");
+            }
+        }
     };
 
-    loadData();
+    // تشغيل جلب البيانات عند فتح الصفحة
+    loadAdminData();
 </script>
 </body>
 </html>
