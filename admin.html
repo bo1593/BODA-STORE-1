@@ -24,43 +24,11 @@
             color: var(--beige);
             font-family: 'Cairo', sans-serif;
             margin: 0;
-            min-height: 100vh;
-        }
-
-        /* Login Screen */
-        #login-screen {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: var(--black);
             display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 10000;
-        }
-
-        .login-card {
-            background: var(--card-bg);
-            border: 2px solid var(--olive-drab);
-            padding: 40px;
-            border-radius: 20px;
-            width: 100%;
-            max-width: 400px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
-            text-align: center;
-        }
-
-        .login-card h2 {
-            font-family: 'Black Ops One';
-            color: var(--beige);
-            margin-bottom: 25px;
+            min-height: 100vh;
         }
 
         /* Sidebar Nav */
-        .admin-wrapper {
-            display: flex;
-            min-height: 100vh;
-        }
-
         .sidebar {
             width: 260px;
             background: rgba(18, 20, 17, 0.95);
@@ -233,384 +201,430 @@
         }
 
         .btn-delete { background: var(--danger); color: white; }
-        .btn-logout { background: var(--danger); color: white; margin-top: auto; }
+        .btn-edit { background: var(--olive-drab); color: white; }
 
         @media (max-width: 768px) {
-            .admin-wrapper { flex-direction: column; }
+            body { flex-direction: column; }
             .sidebar { width: 100%; }
         }
     </style>
 </head>
 <body>
 
-    <!-- Login Screen -->
-    <div id="login-screen">
-        <div class="login-card">
-            <h2>ADMIN LOGIN</h2>
-            <div class="input-group" style="margin-bottom: 15px;">
-                <label>البريد الإلكتروني:</label>
-                <input type="email" id="login-email" placeholder="bodo36711@gmail.com">
-            </div>
-            <div class="input-group" style="margin-bottom: 20px;">
-                <label>كلمة السر:</label>
-                <input type="password" id="login-pass" placeholder="••••••••">
-            </div>
-            <button class="save-btn" style="width: 100%; margin-top: 0;" onclick="handleLogin()">دخول اللوحة ⚡</button>
-        </div>
+    <div class="sidebar">
+        <h2>ADMIN COMMAND</h2>
+        <button class="nav-btn active" onclick="showTab('dashboard')">📊 لوحة الإحصائيات</button>
+        <button class="nav-btn" onclick="showTab('style')">🎨 تعديل الاستيل والألوان</button>
+        <button class="nav-btn" onclick="showTab('packages')">💎 إدارة باقات UC</button>
+        <button class="nav-btn" onclick="showTab('payment')">💳 طرق الدفع والتواصل</button>
+        <button class="nav-btn" onclick="showTab('settings')">⚙️ إعدادات النظام</button>
     </div>
 
-    <!-- Admin Panel Body -->
-    <div class="admin-wrapper" id="admin-content" style="display: none;">
-        <div class="sidebar">
-            <h2>ADMIN COMMAND</h2>
-            <button class="nav-btn active" onclick="showTab('dashboard', this)">📊 لوحة الإحصائيات</button>
-            <button class="nav-btn" onclick="showTab('style', this)">🎨 تعديل الاستيل والألوان</button>
-            <button class="nav-btn" onclick="showTab('packages', this)">💎 إدارة باقات UC</button>
-            <button class="nav-btn" onclick="showTab('payment', this)">💳 طرق الدفع والتواصل</button>
-            <button class="nav-btn" onclick="showTab('settings', this)">⚙️ إعدادات النظام</button>
-            <button class="nav-btn btn-logout" onclick="logout()">تسجيل الخروج 🚪</button>
+    <div class="main-content">
+        <div class="header-bar">
+            <div><strong>حالة النظام:</strong> <span id="system-status" style="color: var(--success);">● متصل وجاهز</span></div>
+            <div><strong>الإصدار:</strong> Olive Edition 2026</div>
         </div>
 
-        <div class="main-content">
-            <div class="header-bar">
-                <div><strong>حالة النظام:</strong> <span style="color: var(--success);">● متصل وجاهز</span></div>
-                <div><strong>الإصدار:</strong> Olive Edition 2026</div>
-            </div>
-
-            <!-- Dashboard Stats -->
-            <div id="dashboard" class="panel-section active">
-                <h3>ملخص النشاط</h3>
-                <div class="stats-grid">
-                    <div class="stat-card">
-                        <h3>إجمالي الطلبات اليوم</h3>
-                        <div class="value" id="stat-count">24</div>
-                    </div>
-                    <div class="stat-card">
-                        <h3>المبيعات</h3>
-                        <div class="value" id="stat-total">14,500 EGP</div>
-                    </div>
-                    <div class="stat-card">
-                        <h3>الباقة الأكثر طلباً</h3>
-                        <div class="value" id="stat-popular">660 UC</div>
-                    </div>
+        <!-- Dashboard Stats -->
+        <div id="dashboard" class="panel-section active">
+            <h3>ملخص النشاط</h3>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <h3>إجمالي الطلبات اليوم</h3>
+                    <div class="value" id="stat-total-orders">0</div>
                 </div>
-
-                <h3>آخر الطلبات المقدمة</h3>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>الآي دي</th>
-                            <th>الاسم</th>
-                            <th>الباقة</th>
-                            <th>المبلغ</th>
-                            <th>الرقم المحول منه</th>
-                            <th>الحالة</th>
-                        </tr>
-                    </thead>
-                    <tbody id="orders-table-body">
-                        <tr>
-                            <td>512398741</td>
-                            <td>SHADOW</td>
-                            <td>660 UC</td>
-                            <td>500 EGP</td>
-                            <td>01012345678</td>
-                            <td><span style="color: var(--success);">تم الشحن</span></td>
-                        </tr>
-                        <tr>
-                            <td>598741236</td>
-                            <td>GHOST</td>
-                            <td>1800 UC</td>
-                            <td>1300 EGP</td>
-                            <td>01198765432</td>
-                            <td><span style="color: gold;">قيد التحقق</span></td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-
-            <!-- Style Control -->
-            <div id="style" class="panel-section">
-                <h3>التحكم في تصميم واستيل الموقع</h3>
-                <div class="form-grid">
-                    <div class="input-group">
-                        <label>اللون الأساسي (Olive Drab):</label>
-                        <div class="color-picker-group">
-                            <input type="color" id="olive-drab-picker" value="#556B2F" onchange="updateColorText('olive-drab', this.value)">
-                            <input type="text" id="olive-drab-text" value="#556B2F">
-                        </div>
-                    </div>
-                    <div class="input-group">
-                        <label>اللون الزاهي (Olive Bright):</label>
-                        <div class="color-picker-group">
-                            <input type="color" id="olive-bright-picker" value="#808000" onchange="updateColorText('olive-bright', this.value)">
-                            <input type="text" id="olive-bright-text" value="#808000">
-                        </div>
-                    </div>
-                    <div class="input-group">
-                        <label>لون الخلفية الأساسي (Background):</label>
-                        <div class="color-picker-group">
-                            <input type="color" id="black-picker" value="#0B0C0B" onchange="updateColorText('black', this.value)">
-                            <input type="text" id="black-text" value="#0B0C0B">
-                        </div>
-                    </div>
-                    <div class="input-group">
-                        <label>لون النصوص (Beige):</label>
-                        <div class="color-picker-group">
-                            <input type="color" id="beige-picker" value="#F5F5DC" onchange="updateColorText('beige', this.value)">
-                            <input type="text" id="beige-text" value="#F5F5DC">
-                        </div>
-                    </div>
+                <div class="stat-card">
+                    <h3>المبيعات</h3>
+                    <div class="value" id="stat-sales">0 EGP</div>
                 </div>
-                <button class="save-btn" onclick="saveStyles()">تطبيق وتحديث الاستيل ⚡</button>
-            </div>
-
-            <!-- Packages Management -->
-            <div id="packages" class="panel-section">
-                <h3>إدارة باقات الشدات (UC)</h3>
-                <div class="form-grid" style="margin-bottom: 20px;">
-                    <div class="input-group">
-                        <label>اسم الباقة (مثال: 660 UC):</label>
-                        <input type="text" id="pkg-name" placeholder="660 UC">
-                    </div>
-                    <div class="input-group">
-                        <label>السعر (مثال: 500 EGP):</label>
-                        <input type="text" id="pkg-price" placeholder="500 EGP">
-                    </div>
-                    <div class="input-group">
-                        <label>السعر القديم (اختياري للخصم):</label>
-                        <input type="text" id="pkg-old-price" placeholder="550 EGP">
-                    </div>
+                <div class="stat-card">
+                    <h3>الباقة الأكثر طلباً</h3>
+                    <div class="value" id="stat-top-package">-</div>
                 </div>
-                <button class="save-btn" style="margin-top:0;" onclick="addPackage()">إضافة باقة جديدة +</button>
-
-                <table style="margin-top: 30px;">
-                    <thead>
-                        <tr>
-                            <th>الباقة</th>
-                            <th>السعر الحالي</th>
-                            <th>السعر قبل الخصم</th>
-                            <th>الإجراءات</th>
-                        </tr>
-                    </thead>
-                    <tbody id="packages-table">
-                        <!-- تُحمل تلقائياً من الذاكرة أو العرض الافتراضي -->
-                    </tbody>
-                </table>
             </div>
 
-            <!-- Payment & Contact Settings -->
-            <div id="payment" class="panel-section">
-                <h3>بيانات الدفع والتواصل</h3>
-                <div class="form-grid">
-                    <div class="input-group">
-                        <label>رقم فودافون كاش:</label>
-                        <input type="text" id="vodafone-number" value="01044580421">
-                    </div>
-                    <div class="input-group">
-                        <label>رقم استقبال الطلبات على الواتساب:</label>
-                        <input type="text" id="wa-order-number" value="201044580421">
-                    </div>
-                    <div class="input-group">
-                        <label>رقم الواتساب العائم (الدعم الفني):</label>
-                        <input type="text" id="wa-float-number" value="201157524491">
-                    </div>
-                </div>
-                <button class="save-btn" onclick="savePayment()">حفظ بيانات الدفع والتواصل 💾</button>
-            </div>
-
-            <!-- General Settings -->
-            <div id="settings" class="panel-section">
-                <h3>إعدادات الموقع والنظام</h3>
-                <div class="form-grid">
-                    <div class="input-group">
-                        <label>اسم المتجر الرئيسي:</label>
-                        <input type="text" id="store-title" value="BODA STORE">
-                    </div>
-                    <div class="input-group">
-                        <label>شريط التنبيهات السفلي:</label>
-                        <input type="text" id="status-text" value="النظام متصل: جاري معالجة طلبات الشحن بنجاح">
-                    </div>
-                    <div class="input-group">
-                        <label>حالة الصيانة:</label>
-                        <select id="maintenance-mode">
-                            <option value="off">الموقع يعمل بشكل طبيعي</option>
-                            <option value="on">تفعيل وضع الصيانة (إغلاق المتجر)</option>
-                        </select>
-                    </div>
-                </div>
-                <button class="save-btn" onclick="saveSettings()">حفظ التغييرات العامة ⚙️</button>
-            </div>
-
+            <h3>آخر الطلبات المقدمة</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>الآي دي</th>
+                        <th>الاسم</th>
+                        <th>الباقة</th>
+                        <th>المبلغ</th>
+                        <th>الرقم المحول منه</th>
+                        <th>الحالة</th>
+                        <th>الإجراءات</th>
+                    </tr>
+                </thead>
+                <tbody id="orders-table">
+                    <tr>
+                        <td colspan="7" style="text-align: center;">جاري تحميل الطلبات...</td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
+
+        <!-- Style Control -->
+        <div id="style" class="panel-section">
+            <h3>التحكم في تصميم واستيل الموقع</h3>
+            <div class="form-grid">
+                <div class="input-group">
+                    <label>اللون الأساسي (Olive Drab):</label>
+                    <div class="color-picker-group">
+                        <input type="color" id="olive-drab-picker" value="#556B2F" onchange="updateColorText('olive-drab', this.value)">
+                        <input type="text" id="olive-drab-text" value="#556B2F">
+                    </div>
+                </div>
+                <div class="input-group">
+                    <label>اللون الزاهي (Olive Bright):</label>
+                    <div class="color-picker-group">
+                        <input type="color" id="olive-bright-picker" value="#808000" onchange="updateColorText('olive-bright', this.value)">
+                        <input type="text" id="olive-bright-text" value="#808000">
+                    </div>
+                </div>
+                <div class="input-group">
+                    <label>لون الخلفية الأساسي (Background):</label>
+                    <div class="color-picker-group">
+                        <input type="color" id="black-picker" value="#0B0C0B" onchange="updateColorText('black', this.value)">
+                        <input type="text" id="black-text" value="#0B0C0B">
+                    </div>
+                </div>
+                <div class="input-group">
+                    <label>لون النصوص (Beige):</label>
+                    <div class="color-picker-group">
+                        <input type="color" id="beige-picker" value="#F5F5DC" onchange="updateColorText('beige', this.value)">
+                        <input type="text" id="beige-text" value="#F5F5DC">
+                    </div>
+                </div>
+            </div>
+            <button class="save-btn" onclick="saveStyleSettings()">تطبيق وتحديث الاستيل ⚡</button>
+        </div>
+
+        <!-- Packages Management -->
+        <div id="packages" class="panel-section">
+            <h3>إدارة باقات الشدات (UC)</h3>
+            <div class="form-grid" style="margin-bottom: 20px;">
+                <div class="input-group">
+                    <label>اسم الباقة (مثال: 660 UC):</label>
+                    <input type="text" id="pkg-name" placeholder="660 UC">
+                </div>
+                <div class="input-group">
+                    <label>السعر (مثال: 500 EGP):</label>
+                    <input type="text" id="pkg-price" placeholder="500 EGP">
+                </div>
+                <div class="input-group">
+                    <label>السعر القديم (اختياري للخصم):</label>
+                    <input type="text" id="pkg-old-price" placeholder="550 EGP">
+                </div>
+            </div>
+            <button class="save-btn" style="margin-top:0;" onclick="addPackage()">إضافة باقة جديدة +</button>
+
+            <table style="margin-top: 30px;">
+                <thead>
+                    <tr>
+                        <th>الباقة</th>
+                        <th>السعر الحالي</th>
+                        <th>السعر قبل الخصم</th>
+                        <th>الإجراءات</th>
+                    </tr>
+                </thead>
+                <tbody id="packages-table">
+                    <tr>
+                        <td colspan="4" style="text-align: center;">جاري تحميل الباقات...</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Payment & Contact Settings -->
+        <div id="payment" class="panel-section">
+            <h3>بيانات الدفع والتواصل</h3>
+            <div class="form-grid">
+                <div class="input-group">
+                    <label>رقم فودافون كاش:</label>
+                    <input type="text" id="vodafone-number" value="01044580421">
+                </div>
+                <div class="input-group">
+                    <label>رقم استقبال الطلبات على الواتساب:</label>
+                    <input type="text" id="wa-order-number" value="201044580421">
+                </div>
+                <div class="input-group">
+                    <label>رقم الواتساب العائم (الدعم الفني):</label>
+                    <input type="text" id="wa-float-number" value="201157524491">
+                </div>
+            </div>
+            <button class="save-btn" onclick="savePaymentSettings()">حفظ بيانات الدفع والتواصل 💾</button>
+        </div>
+
+        <!-- General Settings -->
+        <div id="settings" class="panel-section">
+            <h3>إعدادات الموقع والنظام</h3>
+            <div class="form-grid">
+                <div class="input-group">
+                    <label>اسم المتجر الرئيسي:</label>
+                    <input type="text" id="store-name" value="BODA STORE">
+                </div>
+                <div class="input-group">
+                    <label>شريط التنبيهات السفلي:</label>
+                    <input type="text" id="notification-bar" value="النظام متصل: جاري معالجة طلبات الشحن بنجاح">
+                </div>
+                <div class="input-group">
+                    <label>حالة الصيانة:</label>
+                    <select id="maintenance-mode">
+                        <option value="off">الموقع يعمل بشكل طبيعي</option>
+                        <option value="on">تفعيل وضع الصيانة (إغلاق المتجر)</option>
+                    </select>
+                </div>
+            </div>
+            <button class="save-btn" onclick="saveGeneralSettings()">حفظ التغييرات العامة ⚙️</button>
+        </div>
+
     </div>
 
-    <script>
-        // الباقات الافتراضية
-        const defaultPackages = [
-            { name: '60 UC', price: '50 EGP', oldPrice: '-' },
-            { name: '325 UC', price: '250 EGP', oldPrice: '-' },
-            { name: '660 UC', price: '500 EGP', oldPrice: '550 EGP' },
-            { name: '1800 UC', price: '1300 EGP', oldPrice: '1500 EGP' },
-            { name: '3850 UC', price: '2400 EGP', oldPrice: '2500 EGP' },
-            { name: '8100 UC', price: '4800 EGP', oldPrice: '5000 EGP' },
-            { name: '16200 UC', price: '9500 EGP', oldPrice: '10000 EGP' },
-            { name: '24300 UC', price: '16500 EGP', oldPrice: '17000 EGP' }
-        ];
+    <!-- Firebase SDK Modular Scripts -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-analytics.js";
+        import { getDatabase, ref, set, push, onValue, remove, update } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
-        let packages = JSON.parse(localStorage.getItem('boda_packages')) || defaultPackages;
+        // Your web app's Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyBSK2BXXJumwNYmKtXP8Ej_Guu2B0icrbs",
+            authDomain: "boda-store-fb2b4.firebaseapp.com",
+            databaseURL: "https://boda-store-fb2b4-default-rtdb.firebaseio.com",
+            projectId: "boda-store-fb2b4",
+            storageBucket: "boda-store-fb2b4.firebasestorage.app",
+            messagingSenderId: "363262838551",
+            appId: "1:363262838551:web:525f06ae2c5cdadfa51952",
+            measurementId: "G-YMHGJC10YS"
+        };
 
-        window.addEventListener('DOMContentLoaded', () => {
-            if (localStorage.getItem('boda_admin_logged') === 'true') {
-                document.getElementById('login-screen').style.display = 'none';
-                document.getElementById('admin-content').style.display = 'flex';
-            }
-            loadSavedData();
-            renderPackages();
-        });
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const analytics = getAnalytics(app);
+        const db = getDatabase(app);
 
-        // تسجيل الدخول
-        function handleLogin() {
-            const email = document.getElementById('login-email').value.trim();
-            const pass = document.getElementById('login-pass').value.trim();
-
-            if (email === 'bodo36711@gmail.com' && pass === 'Badr2024@') {
-                localStorage.setItem('boda_admin_logged', 'true');
-                document.getElementById('login-screen').style.display = 'none';
-                document.getElementById('admin-content').style.display = 'flex';
-            } else {
-                alert('عذراً! البريد الإلكتروني أو كلمة السر غير صحيحة.');
-            }
-        }
-
-        // تسجيل الخروج
-        function logout() {
-            localStorage.removeItem('boda_admin_logged');
-            location.reload();
-        }
-
-        // التنقل بين الأقسام
-        function showTab(tabId, btn) {
+        // UI Tabs Switcher
+        window.showTab = function(tabId) {
             document.querySelectorAll('.panel-section').forEach(el => el.classList.remove('active'));
             document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
             
             document.getElementById(tabId).classList.add('active');
-            btn.classList.add('active');
-        }
+            if (event && event.currentTarget) {
+                event.currentTarget.classList.add('active');
+            }
+        };
 
-        function updateColorText(id, val) {
+        window.updateColorText = function(id, val) {
             document.getElementById(id + '-text').value = val;
-        }
+            const picker = document.getElementById(id + '-picker');
+            if(picker) picker.value = val;
+        };
 
-        // حفظ الألوان
-        function saveStyles() {
-            const colors = {
-                'olive-drab': document.getElementById('olive-drab-text').value,
-                'olive-bright': document.getElementById('olive-bright-text').value,
-                'black': document.getElementById('black-text').value,
-                'beige': document.getElementById('beige-text').value
+        // --- Firebase Integration ---
+
+        // 1. Fetch & Listen to Settings (Payment, General, Styles)
+        const settingsRef = ref(db, 'settings');
+        onValue(settingsRef, (snapshot) => {
+            const data = snapshot.val();
+            if (data) {
+                // Payment
+                if (data.vodafoneNumber) document.getElementById('vodafone-number').value = data.vodafoneNumber;
+                if (data.waOrderNumber) document.getElementById('wa-order-number').value = data.waOrderNumber;
+                if (data.waFloatNumber) document.getElementById('wa-float-number').value = data.waFloatNumber;
+
+                // General
+                if (data.storeName) document.getElementById('store-name').value = data.storeName;
+                if (data.notificationBar) document.getElementById('notification-bar').value = data.notificationBar;
+                if (data.maintenanceMode) document.getElementById('maintenance-mode').value = data.maintenanceMode;
+
+                // Style
+                if (data.styles) {
+                    if (data.styles.oliveDrab) {
+                        document.getElementById('olive-drab-text').value = data.styles.oliveDrab;
+                        document.getElementById('olive-drab-picker').value = data.styles.oliveDrab;
+                    }
+                    if (data.styles.oliveBright) {
+                        document.getElementById('olive-bright-text').value = data.styles.oliveBright;
+                        document.getElementById('olive-bright-picker').value = data.styles.oliveBright;
+                    }
+                    if (data.styles.black) {
+                        document.getElementById('black-text').value = data.styles.black;
+                        document.getElementById('black-picker').value = data.styles.black;
+                    }
+                    if (data.styles.beige) {
+                        document.getElementById('beige-text').value = data.styles.beige;
+                        document.getElementById('beige-picker').value = data.styles.beige;
+                    }
+                }
+            }
+        });
+
+        // Save Style
+        window.saveStyleSettings = function() {
+            const styles = {
+                oliveDrab: document.getElementById('olive-drab-text').value,
+                oliveBright: document.getElementById('olive-bright-text').value,
+                black: document.getElementById('black-text').value,
+                beige: document.getElementById('beige-text').value
             };
-            localStorage.setItem('boda_store_colors', JSON.stringify(colors));
-            alert('تم تطبيق وتحديث الاستيل بنجاح! سيتم انعكاسه فوراً على المتجر.');
-        }
+            update(ref(db, 'settings/styles'), styles)
+                .then(() => alert('تم حفظ وتحديث الألوان بنجاح! ⚡'))
+                .catch((err) => alert('خطأ في الحفظ: ' + err.message));
+        };
 
-        // حفظ أرقام الدفع
-        function savePayment() {
-            localStorage.setItem('boda_vodafone', document.getElementById('vodafone-number').value);
-            localStorage.setItem('boda_wa_order', document.getElementById('wa-order-number').value);
-            localStorage.setItem('boda_wa_float', document.getElementById('wa-float-number').value);
-            alert('تم حفظ بيانات الدفع والتواصل بنجاح!');
-        }
+        // Save Payment Info
+        window.savePaymentSettings = function() {
+            const paymentData = {
+                vodafoneNumber: document.getElementById('vodafone-number').value,
+                waOrderNumber: document.getElementById('wa-order-number').value,
+                waFloatNumber: document.getElementById('wa-float-number').value
+            };
+            update(ref(db, 'settings'), paymentData)
+                .then(() => alert('تم حفظ بيانات الدفع والتواصل بنجاح! 💾'))
+                .catch((err) => alert('خطأ في الحفظ: ' + err.message));
+        };
 
-        // حفظ الإعدادات العامة
-        function saveSettings() {
-            localStorage.setItem('boda_store_title', document.getElementById('store-title').value);
-            localStorage.setItem('boda_status_text', document.getElementById('status-text').value);
-            localStorage.setItem('boda_maintenance', document.getElementById('maintenance-mode').value);
-            alert('تم حفظ التغييرات العامة بالنظام!');
-        }
+        // Save General Settings
+        window.saveGeneralSettings = function() {
+            const generalData = {
+                storeName: document.getElementById('store-name').value,
+                notificationBar: document.getElementById('notification-bar').value,
+                maintenanceMode: document.getElementById('maintenance-mode').value
+            };
+            update(ref(db, 'settings'), generalData)
+                .then(() => alert('تم حفظ الإعدادات العامة بنجاح! ⚙️'))
+                .catch((err) => alert('خطأ في الحفظ: ' + err.message));
+        };
 
-        // إضافة باقة
-        function addPackage() {
+        // 2. Packages Management
+        const packagesRef = ref(db, 'packages');
+        
+        window.addPackage = function() {
             const name = document.getElementById('pkg-name').value;
             const price = document.getElementById('pkg-price').value;
             const oldPrice = document.getElementById('pkg-old-price').value || '-';
 
-            if(!name || !price) return alert('برجاء كتابة الاسم والسعر!');
+            if (!name || !price) return alert('برجاء كتابة الاسم والسعر!');
 
-            packages.push({ name, price, oldPrice });
-            localStorage.setItem('boda_packages', JSON.stringify(packages));
-            
-            document.getElementById('pkg-name').value = '';
-            document.getElementById('pkg-price').value = '';
-            document.getElementById('pkg-old-price').value = '';
-            
-            renderPackages();
-            alert('تمت إضافة الباقة بنجاح!');
-        }
+            const newPkgRef = push(packagesRef);
+            set(newPkgRef, {
+                name: name,
+                price: price,
+                oldPrice: oldPrice
+            }).then(() => {
+                document.getElementById('pkg-name').value = '';
+                document.getElementById('pkg-price').value = '';
+                document.getElementById('pkg-old-price').value = '';
+                alert('تمت إضافة الباقة بنجاح!');
+            }).catch((err) => alert('خطأ أثناء إضافة الباقة: ' + err.message));
+        };
 
-        // حذف باقة
-        function deletePackage(index) {
-            packages.splice(index, 1);
-            localStorage.setItem('boda_packages', JSON.stringify(packages));
-            renderPackages();
-        }
+        window.deletePackage = function(key) {
+            if (confirm('هل أنت تأكد من حذف هذه الباقة؟')) {
+                remove(ref(db, `packages/${key}`));
+            }
+        };
 
-        // عرض الباقات في الجدول
-        function renderPackages() {
+        onValue(packagesRef, (snapshot) => {
             const tbody = document.getElementById('packages-table');
             tbody.innerHTML = '';
-            packages.forEach((pkg, index) => {
-                tbody.innerHTML += `
-                    <tr>
+            const data = snapshot.val();
+            if (data) {
+                Object.keys(data).forEach(key => {
+                    const pkg = data[key];
+                    const row = `<tr>
                         <td>${pkg.name}</td>
                         <td>${pkg.price}</td>
                         <td>${pkg.oldPrice}</td>
-                        <td><button class="btn-action btn-delete" onclick="deletePackage(${index})">حذف</button></td>
-                    </tr>
-                `;
-            });
-        }
-
-        // تحميل البيانات عند فتح الصفحة
-        function loadSavedData() {
-            const vodafone = localStorage.getItem('boda_vodafone');
-            if(vodafone) document.getElementById('vodafone-number').value = vodafone;
-
-            const waOrder = localStorage.getItem('boda_wa_order');
-            if(waOrder) document.getElementById('wa-order-number').value = waOrder;
-
-            const waFloat = localStorage.getItem('boda_wa_float');
-            if(waFloat) document.getElementById('wa-float-number').value = waFloat;
-
-            const title = localStorage.getItem('boda_store_title');
-            if(title) document.getElementById('store-title').value = title;
-
-            const status = localStorage.getItem('boda_status_text');
-            if(status) document.getElementById('status-text').value = status;
-
-            const maintenance = localStorage.getItem('boda_maintenance');
-            if(maintenance) document.getElementById('maintenance-mode').value = maintenance;
-
-            const colors = JSON.parse(localStorage.getItem('boda_store_colors'));
-            if(colors) {
-                if(colors['olive-drab']) {
-                    document.getElementById('olive-drab-text').value = colors['olive-drab'];
-                    document.getElementById('olive-drab-picker').value = colors['olive-drab'];
-                }
-                if(colors['olive-bright']) {
-                    document.getElementById('olive-bright-text').value = colors['olive-bright'];
-                    document.getElementById('olive-bright-picker').value = colors['olive-bright'];
-                }
-                if(colors['black']) {
-                    document.getElementById('black-text').value = colors['black'];
-                    document.getElementById('black-picker').value = colors['black'];
-                }
-                if(colors['beige']) {
-                    document.getElementById('beige-text').value = colors['beige'];
-                    document.getElementById('beige-picker').value = colors['beige'];
-                }
+                        <td><button class="btn-action btn-delete" onclick="deletePackage('${key}')">حذف</button></td>
+                    </tr>`;
+                    tbody.innerHTML += row;
+                });
+            } else {
+                tbody.innerHTML = '<tr><td colspan="4" style="text-align: center;">لا توجد باقات حالياً. قم بإضافة باقة جديدة.</td></tr>';
             }
-        }
+        });
+
+        // 3. Orders & Dashboard Stats
+        const ordersRef = ref(db, 'orders');
+
+        window.updateOrderStatus = function(key, status) {
+            update(ref(db, `orders/${key}`), { status: status });
+        };
+
+        window.deleteOrder = function(key) {
+            if (confirm('هل ترغب في حذف هذا الطلب؟')) {
+                remove(ref(db, `orders/${key}`));
+            }
+        };
+
+        onValue(ordersRef, (snapshot) => {
+            const tbody = document.getElementById('orders-table');
+            tbody.innerHTML = '';
+            const data = snapshot.val();
+            
+            let totalOrders = 0;
+            let totalSales = 0;
+            const packageCounts = {};
+
+            if (data) {
+                Object.keys(data).forEach(key => {
+                    const order = data[key];
+                    totalOrders++;
+                    
+                    // Sales calc (parsing numbers from price string)
+                    const numericPrice = parseFloat(order.price) || 0;
+                    totalSales += numericPrice;
+
+                    // Package stats
+                    if (order.packageName) {
+                        packageCounts[order.packageName] = (packageCounts[order.packageName] || 0) + 1;
+                    }
+
+                    // Status Badge Styling
+                    let statusBadge = `<span style="color: gold;">قيد التحقق</span>`;
+                    if (order.status === 'completed') statusBadge = `<span style="color: var(--success);">تم الشحن</span>`;
+                    if (order.status === 'rejected') statusBadge = `<span style="color: var(--danger);">ملغي</span>`;
+
+                    const row = `<tr>
+                        <td>${order.playerId || '-'}</td>
+                        <td>${order.playerName || '-'}</td>
+                        <td>${order.packageName || '-'}</td>
+                        <td>${order.price || '-'}</td>
+                        <td>${order.senderNumber || '-'}</td>
+                        <td>${statusBadge}</td>
+                        <td>
+                            <button class="btn-action btn-edit" onclick="updateOrderStatus('${key}', 'completed')">تم الشحن</button>
+                            <button class="btn-action btn-delete" onclick="deleteOrder('${key}')">حذف</button>
+                        </td>
+                    </tr>`;
+                    tbody.innerHTML += row;
+                });
+
+                // Update Stats Dashboard
+                document.getElementById('stat-total-orders').innerText = totalOrders;
+                document.getElementById('stat-sales').innerText = totalSales + ' EGP';
+                
+                // Top Package
+                let topPkg = '-';
+                let maxCount = 0;
+                for (const pkg in packageCounts) {
+                    if (packageCounts[pkg] > maxCount) {
+                        maxCount = packageCounts[pkg];
+                        topPkg = pkg;
+                    }
+                }
+                document.getElementById('stat-top-package').innerText = topPkg;
+
+            } else {
+                tbody.innerHTML = '<tr><td colspan="7" style="text-align: center;">لا توجد طلبات حتي الآن.</td></tr>';
+                document.getElementById('stat-total-orders').innerText = '0';
+                document.getElementById('stat-sales').innerText = '0 EGP';
+                document.getElementById('stat-top-package').innerText = '-';
+            }
+        });
     </script>
 </body>
 </html>
