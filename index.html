@@ -274,7 +274,7 @@
     <div class="grid-bg"></div>
 
     <div class="sticky-banner" id="sticky-header">
-        <h2>BODA STORE</h2>
+        <h2 id="banner-title">BODA STORE</h2>
     </div>
 
     <div id="loader-screen">
@@ -288,7 +288,7 @@
     <header id="header-section">
         <div class="header-glow"></div>
         <p style="color: var(--olive-bright); font-weight: bold; letter-spacing: 3px;">[ MISSION STATUS: READY ]</p>
-        <h1>BODA STORE</h1>
+        <h1 id="main-store-title">BODA STORE</h1>
         <p style="color: var(--dark-beige); font-size: 1.2rem;">⚡ النمط العسكري لشحن شدات ببجي ⚡</p>
     </header>
 
@@ -344,24 +344,25 @@
     <div id="payment-page">
         <button onclick="location.reload()" style="background: none; border: 1px solid #ff4444; color: #ff4444; cursor: pointer; padding: 5px 15px; margin-bottom: 20px; border-radius: 8px;">إلغاء العملية</button>
         <h2 id="order-title" style="color: var(--beige); text-align: center; font-family: 'Black Ops One';"></h2>
-        <div class="cash-box">فودافون كاش: 01044580421</div>
+        <div class="cash-box" id="vodafone-cash-box">فودافون كاش: 01044580421</div>
         <div class="input-group"><label>ID اللاعب:</label><input type="number" id="player-id" placeholder="123456789"></div>
         <div class="input-group"><label>اسم اللاعب:</label><input type="text" id="player-name" placeholder="الاسم في اللعبة"></div>
         <div class="input-group"><label>الرقم المحول منه:</label><input type="number" id="sender-number" placeholder="رقم المحفظة التي حولت منها"></div>
         <button class="confirm-btn" onclick="finalize()">تأكيد الإرسال ⚡</button>
     </div>
 
-    <a href="https://wa.me/201157524491" class="whatsapp-float" target="_blank">
+    <a href="https://wa.me/201157524491" class="whatsapp-float" id="wa-float-link" target="_blank">
         <svg viewBox="0 0 24 24" width="35" height="35" fill="currentColor"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.588-5.946 0-6.556 5.332-11.891 11.893-11.891 3.181 0 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.481 8.403 0 6.556-5.332 11.893-11.893 11.893-1.996 0-3.951-.502-5.69-1.451l-6.293 1.667zm6.29-3.307l.36.213c1.489.883 3.202 1.348 4.968 1.348 5.455 0 9.893-4.438 9.893-9.893 0-2.641-1.03-5.124-2.898-6.995-1.868-1.871-4.348-2.902-6.995-2.902-5.455 0-9.893 4.438-9.893 9.893 0 2.052.534 4.053 1.547 5.802l.236.41-1.011 3.691 3.784-.977z"/></svg>
     </a>
 
-    <div style="background: rgba(85, 107, 47, 0.1); border-top: 1px solid var(--olive-drab); padding: 10px; text-align: center; font-size: 0.85rem; color: var(--dark-beige);">
+    <div id="status-bar" style="background: rgba(85, 107, 47, 0.1); border-top: 1px solid var(--olive-drab); padding: 10px; text-align: center; font-size: 0.85rem; color: var(--dark-beige);">
         <span style="display: inline-block; width: 8px; height: 8px; background: #00ff00; border-radius: 50%; margin-left: 8px; animation: blink 1.5s infinite;"></span>
-        النظام متصل: جاري معالجة طلبات الشحن بنجاح
+        <span id="status-text">النظام متصل: جاري معالجة طلبات الشحن بنجاح</span>
     </div>
 
     <script>
         let pack = "", price = "";
+        let targetWaNumber = "201044580421";
 
         // وظيفة إظهار الهيدر اللاصق عند التمرير
         window.onscroll = function() {
@@ -396,9 +397,85 @@
             const msg = `طلب شحن جديد (Olive Edition):%0A------------------%0Aالحزمة: ${pack}%0Aالسعر: ${price}%0Aالآي دي: ${id}%0Aالاسم: ${name}%0Aالرقم المحول منه: ${sender}%0A------------------%0Aتم التحويل، برجاء ارسال اسكرين!`;
 
             setTimeout(() => {
-                window.location.href = `https://wa.me/201044580421?text=${msg}`;
+                window.location.href = `https://wa.me/${targetWaNumber}?text=${msg}`;
             }, 2500);
         }
+
+        // ==========================================
+        // كود الربط التلقائي مع لوحة التحكم (Admin Panel)
+        // ==========================================
+        window.addEventListener('DOMContentLoaded', () => {
+            // 1. استرجاع الألوان المحفوظة
+            const colors = JSON.parse(localStorage.getItem('boda_store_colors'));
+            if (colors) {
+                if (colors['olive-drab']) document.documentElement.style.setProperty('--olive-drab', colors['olive-drab']);
+                if (colors['olive-bright']) document.documentElement.style.setProperty('--olive-bright', colors['olive-bright']);
+                if (colors['black']) document.documentElement.style.setProperty('--black', colors['black']);
+                if (colors['beige']) document.documentElement.style.setProperty('--beige', colors['beige']);
+            }
+
+            // 2. استرجاع أرقام الدفع والتواصل
+            const vodafone = localStorage.getItem('boda_vodafone');
+            if (vodafone) {
+                document.getElementById('vodafone-cash-box').innerText = 'فودافون كاش: ' + vodafone;
+            }
+
+            const waOrder = localStorage.getItem('boda_wa_order');
+            if (waOrder) {
+                targetWaNumber = waOrder;
+            }
+
+            const waFloat = localStorage.getItem('boda_wa_float');
+            if (waFloat) {
+                document.getElementById('wa-float-link').href = 'https://wa.me/' + waFloat;
+            }
+
+            // 3. استرجاع بيانات النظام والعناوين
+            const storeTitle = localStorage.getItem('boda_store_title');
+            if (storeTitle) {
+                document.getElementById('main-store-title').innerText = storeTitle;
+                document.getElementById('banner-title').innerText = storeTitle;
+            }
+
+            const statusText = localStorage.getItem('boda_status_text');
+            if (statusText) {
+                document.getElementById('status-text').innerText = statusText;
+            }
+
+            // 4. فحص وضع الصيانة
+            const maintenance = localStorage.getItem('boda_maintenance');
+            if (maintenance === 'on') {
+                document.body.innerHTML = `
+                    <div style="height:100vh; display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; padding:20px;">
+                        <h1 style="font-family:'Black Ops One'; color:var(--olive-bright); font-size:3rem; margin-bottom:10px;">MAINTENANCE MODE</h1>
+                        <p style="font-size:1.5rem; color:var(--beige);">الموقع حالياً في وضع الصيانة للتحديث. نعود قريباً!</p>
+                    </div>
+                `;
+                return;
+            }
+
+            // 5. تحديث الباقات إذا تم إضافتها من الأدمن
+            const customPackages = JSON.parse(localStorage.getItem('boda_packages'));
+            if (customPackages && customPackages.length > 0) {
+                const container = document.getElementById('offers-section');
+                container.innerHTML = ''; // مسح الباقات الافتراضية
+                customPackages.forEach(pkg => {
+                    const card = document.createElement('div');
+                    card.className = 'card';
+                    let oldPriceHTML = '';
+                    if (pkg.oldPrice && pkg.oldPrice !== '-') {
+                        oldPriceHTML = `<div style="color: #000; font-size: 0.8rem; margin-bottom: 10px; background: #ffcc00; display: inline-block; padding: 2px 10px; font-weight: bold;">⚠️ عرض لفترة محدودة</div>`;
+                    }
+                    card.innerHTML = `
+                        ${oldPriceHTML}
+                        <h2>${pkg.name}</h2>
+                        <span class="price">${pkg.price} ${pkg.oldPrice && pkg.oldPrice !== '-' ? 'بدل من ' + pkg.oldPrice : ''}</span>
+                        <button class="olive-btn" onclick="goToPay('${pkg.name}', '${pkg.price}')">تجهيز الطلب</button>
+                    `;
+                    container.appendChild(card);
+                });
+            }
+        });
     </script>
 
     <footer>BODA STORE // OLIVE EDITION // 2026</footer>
