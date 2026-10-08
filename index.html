@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title id="site-title">BODA STORE | OLIVE EDITION</title>
+    <title id="page-title">BODA STORE | OLIVE EDITION</title>
     <link href="https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Cairo:wght@700;900&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -274,7 +274,7 @@
     <div class="grid-bg"></div>
 
     <div class="sticky-banner" id="sticky-header">
-        <h2 id="sticky-title">BODA STORE</h2>
+        <h2 id="sticky-store-name">BODA STORE</h2>
     </div>
 
     <div id="loader-screen">
@@ -293,116 +293,174 @@
     </header>
 
     <div class="container" id="offers-section">
-        <!-- يتم تحميل الباقات ديناميكياً من الإعدادات أو القائمة الافتراضية -->
+        <!-- الباقات الافتراضية للبدء، ويتم تحديثها تلقائياً من Firebase لو وُجدت -->
+        <div class="card">
+            <h2>60 UC</h2>
+            <span class="price">50 EGP</span>
+            <button class="olive-btn" onclick="goToPay('60 UC', '50 EGP')">تجهيز الطلب</button>
+        </div>
+        <div class="card">
+            <h2>325 UC</h2>
+            <span class="price">250 EGP</span>
+            <button class="olive-btn" onclick="goToPay('325 UC', '250 EGP')">تجهيز الطلب</button>
+        </div>
+        <div class="card">
+            <div style="color: #000; font-size: 0.8rem; margin-bottom: 10px; background: #ffcc00; display: inline-block; padding: 2px 10px; font-weight: bold;">⚠️ عرض لفترة محدودة</div>
+            <h2>660 UC</h2>
+            <span class="price">500بدل من 5̸5̸0̸ EGP</span>
+            <button class="olive-btn" onclick="goToPay('660 UC', '500 EGP')">تجهيز الطلب</button>
+        </div>
+        <div class="card">
+            <div style="color: #000; font-size: 0.8rem; margin-bottom: 10px; background: #ffcc00; display: inline-block; padding: 2px 10px; font-weight: bold;">⚠️ عرض لفترة محدودة</div>
+            <h2>1800 UC</h2>
+            <span class="price">1300بدل من 1̸5̸0̸0̸ EGP</span>
+            <button class="olive-btn" onclick="goToPay('1800 UC', '1300 EGP')">تجهيز الطلب</button>
+        </div>
+        <div class="card">
+            <div style="color: #000; font-size: 0.8rem; margin-bottom: 10px; background: #ffcc00; display: inline-block; padding: 2px 10px; font-weight: bold;">⚠️ عرض لفترة محدودة</div>
+            <h2>3850 UC</h2>
+            <span class="price">2400بدل من 2̸5̸0̸0̸ EGP</span>
+            <button class="olive-btn" onclick="goToPay('3850 UC', '2400 EGP')">تجهيز الطلب</button>
+        </div>
+        <div class="card">
+            <div style="color: #000; font-size: 0.8rem; margin-bottom: 10px; background: #ffcc00; display: inline-block; padding: 2px 10px; font-weight: bold;">⚠️ عرض لفترة محدودة</div>
+            <h2>8100 UC</h2>
+            <span class="price">4800بدل من 5̸0̸0̸0̸ EGP</span>
+            <button class="olive-btn" onclick="goToPay('8100 UC', '4800 EGP')">تجهيز الطلب</button>
+        </div>
+        <div class="card">
+            <div style="color: #000; font-size: 0.8rem; margin-bottom: 10px; background: #ffcc00; display: inline-block; padding: 2px 10px; font-weight: bold;">⚠️ عرض لفترة محدودة</div>
+            <h2>16200 UC</h2>
+            <span class="price">9500بدل من 1̸0̸0̸0̸0̸ EGP</span>
+            <button class="olive-btn" onclick="goToPay('16200 UC', '9500 EGP')">تجهيز الطلب</button>
+        </div>
+        <div class="card">
+            <div style="color: #000; font-size: 0.8rem; margin-bottom: 10px; background: #ffcc00; display: inline-block; padding: 2px 10px; font-weight: bold;">⚠️ عرض لفترة محدودة</div>
+            <h2>24300 UC</h2>
+            <span class="price">16500بدل من 1̸7̸0̸0̸0̸ EGP</span>
+            <button class="olive-btn" onclick="goToPay('24300 UC', '16500 EGP')">تجهيز الطلب</button>
+        </div>
     </div>
 
     <div id="payment-page">
         <button onclick="location.reload()" style="background: none; border: 1px solid #ff4444; color: #ff4444; cursor: pointer; padding: 5px 15px; margin-bottom: 20px; border-radius: 8px;">إلغاء العملية</button>
         <h2 id="order-title" style="color: var(--beige); text-align: center; font-family: 'Black Ops One';"></h2>
-        <div class="cash-box" id="vodafone-display">فودافون كاش: 01044580421</div>
+        <div class="cash-box" id="vodafone-cash-box">فودافون كاش: 01044580421</div>
         <div class="input-group"><label>ID اللاعب:</label><input type="number" id="player-id" placeholder="123456789"></div>
         <div class="input-group"><label>اسم اللاعب:</label><input type="text" id="player-name" placeholder="الاسم في اللعبة"></div>
         <div class="input-group"><label>الرقم المحول منه:</label><input type="number" id="sender-number" placeholder="رقم المحفظة التي حولت منها"></div>
         <button class="confirm-btn" onclick="finalize()">تأكيد الإرسال ⚡</button>
     </div>
 
-    <a href="https://wa.me/201157524491" class="whatsapp-float" id="wa-float-link" target="_blank">
+    <a href="https://wa.me/201157524491" id="wa-float-link" class="whatsapp-float" target="_blank">
         <svg viewBox="0 0 24 24" width="35" height="35" fill="currentColor"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.588-5.946 0-6.556 5.332-11.891 11.893-11.891 3.181 0 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.481 8.403 0 6.556-5.332 11.893-11.893 11.893-1.996 0-3.951-.502-5.69-1.451l-6.293 1.667zm6.29-3.307l.36.213c1.489.883 3.202 1.348 4.968 1.348 5.455 0 9.893-4.438 9.893-9.893 0-2.641-1.03-5.124-2.898-6.995-1.868-1.871-4.348-2.902-6.995-2.902-5.455 0-9.893 4.438-9.893 9.893 0 2.052.534 4.053 1.547 5.802l.236.41-1.011 3.691 3.784-.977z"/></svg>
     </a>
 
     <div style="background: rgba(85, 107, 47, 0.1); border-top: 1px solid var(--olive-drab); padding: 10px; text-align: center; font-size: 0.85rem; color: var(--dark-beige);">
         <span style="display: inline-block; width: 8px; height: 8px; background: #00ff00; border-radius: 50%; margin-left: 8px; animation: blink 1.5s infinite;"></span>
-        <span id="ticker-text">النظام متصل: جاري معالجة طلبات الشحن بنجاح</span>
+        <span id="footer-notification-text">النظام متصل: جاري معالجة طلبات الشحن بنجاح</span>
     </div>
+
+    <!-- Firebase Integration -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getDatabase, ref, push, set, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBSK2BXXJumwNYmKtXP8Ej_Guu2B0icrbs",
+            authDomain: "boda-store-fb2b4.firebaseapp.com",
+            databaseURL: "https://boda-store-fb2b4-default-rtdb.firebaseio.com",
+            projectId: "boda-store-fb2b4",
+            storageBucket: "boda-store-fb2b4.firebasestorage.app",
+            messagingSenderId: "363262838551",
+            appId: "1:363262838551:web:525f06ae2c5cdadfa51952",
+            measurementId: "G-YMHGJC10YS"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        let waOrderNum = "201044580421";
+
+        // Read Settings Live
+        const settingsRef = ref(db, 'settings');
+        onValue(settingsRef, (snapshot) => {
+            const data = snapshot.val();
+            if (data) {
+                if (data.storeName) {
+                    document.getElementById('main-store-name').innerText = data.storeName;
+                    document.getElementById('sticky-store-name').innerText = data.storeName;
+                    document.getElementById('page-title').innerText = data.storeName + " | OLIVE EDITION";
+                    document.getElementById('footer-text').innerText = `${data.storeName} // OLIVE EDITION // 2026`;
+                }
+                if (data.vodafoneNumber) {
+                    document.getElementById('vodafone-cash-box').innerText = "فودافون كاش: " + data.vodafoneNumber;
+                }
+                if (data.waOrderNumber) {
+                    waOrderNum = data.waOrderNumber;
+                }
+                if (data.waFloatNumber) {
+                    document.getElementById('wa-float-link').href = `https://wa.me/${data.waFloatNumber}`;
+                }
+                if (data.notificationBar) {
+                    document.getElementById('footer-notification-text').innerText = data.notificationBar;
+                }
+
+                // Apply Colors
+                if (data.styles) {
+                    const root = document.documentElement;
+                    if (data.styles.oliveDrab) root.style.setProperty('--olive-drab', data.styles.oliveDrab);
+                    if (data.styles.oliveBright) root.style.setProperty('--olive-bright', data.styles.oliveBright);
+                    if (data.styles.black) root.style.setProperty('--black', data.styles.black);
+                    if (data.styles.beige) root.style.setProperty('--beige', data.styles.beige);
+                }
+            }
+        });
+
+        // Read Packages Dynamic
+        const packagesRef = ref(db, 'packages');
+        onValue(packagesRef, (snapshot) => {
+            const data = snapshot.val();
+            if (data) {
+                const container = document.getElementById('offers-section');
+                container.innerHTML = '';
+                Object.keys(data).forEach(key => {
+                    const pkg = data[key];
+                    const hasDiscount = pkg.oldPrice && pkg.oldPrice !== '-';
+                    const badge = hasDiscount ? `<div style="color: #000; font-size: 0.8rem; margin-bottom: 10px; background: #ffcc00; display: inline-block; padding: 2px 10px; font-weight: bold;">⚠️ عرض لفترة محدودة</div>` : '';
+                    const priceText = hasDiscount ? `${pkg.price} بدل من ${pkg.oldPrice}` : pkg.price;
+                    
+                    const cardHTML = `
+                        <div class="card">
+                            ${badge}
+                            <h2>${pkg.name}</h2>
+                            <span class="price">${priceText}</span>
+                            <button class="olive-btn" onclick="goToPay('${pkg.name}', '${pkg.price}')">تجهيز الطلب</button>
+                        </div>
+                    `;
+                    container.innerHTML += cardHTML;
+                });
+            }
+        });
+
+        // Save Order to Firebase
+        window.saveOrderToDatabase = function(orderData) {
+            const ordersRef = ref(db, 'orders');
+            const newOrderRef = push(ordersRef);
+            return set(newOrderRef, {
+                ...orderData,
+                status: 'pending',
+                timestamp: new Date().toISOString()
+            });
+        };
+
+        window.getWaOrderNum = function() {
+            return waOrderNum;
+        };
+    </script>
 
     <script>
         let pack = "", price = "";
-        let waOrderNumber = "201044580421";
-
-        // الباقات الافتراضية للتحميل في حالة عدم وجود باقات محفوظة
-        const defaultPackages = [
-            { name: "60 UC", price: "50 EGP", oldPrice: "" },
-            { name: "325 UC", price: "250 EGP", oldPrice: "" },
-            { name: "660 UC", price: "500 EGP", oldPrice: "550 EGP", badge: true },
-            { name: "1800 UC", price: "1300 EGP", oldPrice: "1500 EGP", badge: true },
-            { name: "3850 UC", price: "2400 EGP", oldPrice: "2500 EGP", badge: true },
-            { name: "8100 UC", price: "4800 EGP", oldPrice: "5000 EGP", badge: true },
-            { name: "16200 UC", price: "9500 EGP", oldPrice: "10000 EGP", badge: true },
-            { name: "24300 UC", price: "16500 EGP", oldPrice: "17000 EGP", badge: true }
-        ];
-
-        // تحميل الإعدادات المخصصة من localStorage
-        function loadDynamicSettings() {
-            // الألوان
-            const colors = JSON.parse(localStorage.getItem('boda_colors') || '{}');
-            if (colors['olive-drab']) document.documentElement.style.setProperty('--olive-drab', colors['olive-drab']);
-            if (colors['olive-bright']) document.documentElement.style.setProperty('--olive-bright', colors['olive-bright']);
-            if (colors['black']) document.documentElement.style.setProperty('--black', colors['black']);
-            if (colors['beige']) document.documentElement.style.setProperty('--beige', colors['beige']);
-
-            // بيانات التواصل والدفع
-            const paymentData = JSON.parse(localStorage.getItem('boda_payment') || '{}');
-            if (paymentData.vodafone) {
-                document.getElementById('vodafone-display').innerText = "فودافون كاش: " + paymentData.vodafone;
-            }
-            if (paymentData.waOrder) {
-                waOrderNumber = paymentData.waOrder;
-            }
-            if (paymentData.waFloat) {
-                document.getElementById('wa-float-link').href = "https://wa.me/" + paymentData.waFloat;
-            }
-
-            // إعدادات العامة للمتجر
-            const settingsData = JSON.parse(localStorage.getItem('boda_settings') || '{}');
-            if (settingsData.storeName) {
-                document.getElementById('main-store-name').innerText = settingsData.storeName;
-                document.getElementById('sticky-title').innerText = settingsData.storeName;
-                document.getElementById('site-title').innerText = settingsData.storeName + " | OLIVE EDITION";
-                document.getElementById('footer-title').innerText = settingsData.storeName + " // OLIVE EDITION // 2026";
-            }
-            if (settingsData.tickerText) {
-                document.getElementById('ticker-text').innerText = settingsData.tickerText;
-            }
-            if (settingsData.maintenance === 'on') {
-                document.body.innerHTML = `<div style="text-align:center; padding: 100px; color: var(--beige);"><h1>⚠️ المتجر في وضع الصيانة حالياً</h1><p>نعمل على تحسين الخدمات، سنعود قريباً!</p></div>`;
-                return;
-            }
-
-            // عرض الباقات
-            renderPackages();
-        }
-
-        function renderPackages() {
-            const container = document.getElementById('offers-section');
-            const savedPackages = JSON.parse(localStorage.getItem('boda_packages'));
-            const packages = savedPackages && savedPackages.length > 0 ? savedPackages : defaultPackages;
-
-            container.innerHTML = '';
-
-            packages.forEach(pkg => {
-                let badgeHTML = '';
-                if (pkg.badge || (pkg.oldPrice && pkg.oldPrice !== '-')) {
-                    badgeHTML = `<div style="color: #000; font-size: 0.8rem; margin-bottom: 10px; background: #ffcc00; display: inline-block; padding: 2px 10px; font-weight: bold;">⚠️ عرض لفترة محدودة</div>`;
-                }
-
-                let priceDisplay = pkg.price;
-                if (pkg.oldPrice && pkg.oldPrice !== '-') {
-                    // تشطيب على السعر القديم
-                    const struckOldPrice = pkg.oldPrice.split('').join('̸');
-                    priceDisplay = `${pkg.price.replace('EGP','')}بدل من ${struckOldPrice}`;
-                }
-
-                const cardHTML = `
-                    <div class="card">
-                        ${badgeHTML}
-                        <h2>${pkg.name}</h2>
-                        <span class="price">${priceDisplay}</span>
-                        <button class="olive-btn" onclick="goToPay('${pkg.name}', '${pkg.price}')">تجهيز الطلب</button>
-                    </div>
-                `;
-                container.innerHTML += cardHTML;
-            });
-        }
 
         // وظيفة إظهار الهيدر اللاصق عند التمرير
         window.onscroll = function() {
@@ -434,29 +492,27 @@
             document.getElementById('loader-screen').style.display = 'flex';
             document.getElementById('payment-page').style.display = 'none';
 
-            // حفظ الطلب في السجل المحلي ليقرأه الأدمن في لوحة التحكم
-            const existingOrders = JSON.parse(localStorage.getItem('boda_orders') || '[]');
-            existingOrders.unshift({
-                id: id,
-                name: name,
-                pack: pack,
-                price: price,
-                sender: sender,
-                status: 'قيد التحقق'
-            });
-            localStorage.setItem('boda_orders', JSON.stringify(existingOrders));
+            // الحفظ في قاعدة بيانات Firebase
+            if (window.saveOrderToDatabase) {
+                window.saveOrderToDatabase({
+                    packageName: pack,
+                    price: price,
+                    playerId: id,
+                    playerName: name,
+                    senderNumber: sender
+                });
+            }
 
             const msg = `طلب شحن جديد (Olive Edition):%0A------------------%0Aالحزمة: ${pack}%0Aالسعر: ${price}%0Aالآي دي: ${id}%0Aالاسم: ${name}%0Aالرقم المحول منه: ${sender}%0A------------------%0Aتم التحويل، برجاء ارسال اسكرين!`;
 
+            const targetNumber = window.getWaOrderNum ? window.getWaOrderNum() : "201044580421";
+
             setTimeout(() => {
-                window.location.href = `https://wa.me/${waOrderNumber}?text=${msg}`;
+                window.location.href = `https://wa.me/${targetNumber}?text=${msg}`;
             }, 2500);
         }
-
-        // تشغيل ربط الإعدادات ديناميكياً عند التحميل
-        window.onload = loadDynamicSettings;
     </script>
 
-    <footer id="footer-title">BODA STORE // OLIVE EDITION // 2026</footer>
+    <footer id="footer-text">BODA STORE // OLIVE EDITION // 2026</footer>
 </body>
 </html>
